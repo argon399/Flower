@@ -1,13 +1,11 @@
-package org.bugtracker;
+package org.flower;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ServingWebContentApplication {
-
+public class Application {
     public static void main(String[] args) {
-        SpringApplication.run(ServingWebContentApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
-
 }

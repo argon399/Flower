@@ -6,13 +6,15 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Butracker" />
+        <module name="PMS Flower" />
+        <module name="Flower" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="Butracker" options="-parameters" />
+      <module name="Flower" options="-parameters" />
+      <module name="PMS Flower" options="-parameters" />
     </option>
   </component>
 </project>
