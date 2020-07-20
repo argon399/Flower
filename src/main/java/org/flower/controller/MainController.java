@@ -1,6 +1,7 @@
 package org.flower.controller;
 
 import org.flower.repository.TeamRepository;
+import org.flower.repository.TeamRoleRepository;
 import org.flower.repository.UserRepository;
 import org.flower.workflow.team.Team;
 import org.flower.workflow.team.TeamRole;
@@ -16,6 +17,8 @@ public class MainController {
     private static TeamRepository teamRepository;
     @Autowired
     private static UserRepository userRepository;
+    @Autowired
+    private static TeamRoleRepository teamRoleRepository;
     @GetMapping("/")
     public String start(Model model) {
 
@@ -23,7 +26,7 @@ public class MainController {
         User user = new User();
         user.setUsername("test");
         userRepository.save(user);
-        team.addMember(user, TeamRole.LEADER);
+        team.addMember(user, teamRoleRepository.findByRole("LEADER"));
         teamRepository.save(team);
 
         return "home";

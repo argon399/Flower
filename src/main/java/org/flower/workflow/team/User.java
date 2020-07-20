@@ -1,5 +1,7 @@
 package org.flower.workflow.team;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -29,11 +31,12 @@ public class User implements UserDetails {
 
     private boolean active;
 
+    @Column(length = 10)
     private String activationCode;
 
-    @ElementCollection(targetClass = UserRole.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "usr_role", joinColumns = @JoinColumn(name = "id_usr"))
-    @Enumerated(EnumType.STRING)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "id_user"), inverseJoinColumns = @JoinColumn(name = "id_role"))
     private Set<UserRole> roles;
 
     public Long getId() {

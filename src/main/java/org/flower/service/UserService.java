@@ -2,7 +2,6 @@ package org.flower.service;
 
 import org.flower.repository.UserRepository;
 import org.flower.workflow.team.User;
-import org.flower.workflow.team.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -57,7 +55,7 @@ public class UserService implements UserDetailsService {
         }
 
         user.setActive(false);
-        user.setRoles(Collections.singleton(UserRole.USER));
+        //user.setRoles(Collections.singleton(UserRole.USER));
         user.setActivationCode(UUID.randomUUID().toString());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
@@ -104,17 +102,17 @@ public class UserService implements UserDetailsService {
     public void saveUser(User user, String username, Map<String, String> form) {
         user.setUsername(username);
 
-        Set<String> roles = Arrays.stream(UserRole.values())
-                .map(UserRole::name)
-                .collect(Collectors.toSet());
+//        Set<String> roles = Arrays.stream(UserRole.values())
+//                .map(UserRole::name)
+//                .collect(Collectors.toSet());
+//
+//        user.getRoles().clear();
 
-        user.getRoles().clear();
-
-        for (String key : form.keySet()) {
-            if(roles.contains(key)) {
-                user.getRoles().add(UserRole.USER.valueOf(key));
-            }
-        }
+//        for (String key : form.keySet()) {
+//            if(roles.contains(key)) {
+//                user.getRoles().add(UserRole.USER.valueOf(key));
+//            }
+//        }
 
         userRepository.save(user);
     }

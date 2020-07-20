@@ -1,5 +1,8 @@
 package org.flower.workflow.team;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.HashMap;
@@ -20,11 +23,9 @@ public class Team {
     @JoinColumn(name = "id_leader")
     private User leader;
 
-    @ElementCollection
-    @CollectionTable(name = "team_member", joinColumns = @JoinColumn(name = "id_team"))
-    @MapKeyColumn(name = "id_usr")
-    @Column(name = "role")
-    @Enumerated(EnumType.STRING)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "team_member", joinColumns = @JoinColumn(name = "id_team"), inverseJoinColumns = @JoinColumn(name = "id_team_role"))
+    @MapKeyJoinColumn(name = "id_member")
     private Map<User, TeamRole> members = new HashMap<>();
 
     public Long getId() {

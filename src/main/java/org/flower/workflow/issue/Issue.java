@@ -14,11 +14,20 @@ public class Issue {
     private Long id;
 
     private String label;
+    @Column(length = 4000 )
     private String description;
     private Date dateCreated;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_priority")
     private IssuePriority priority;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_status")
     private IssueStatus status;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_type")
     private IssueType type;
 
     @ManyToOne(fetch = FetchType.LAZY)

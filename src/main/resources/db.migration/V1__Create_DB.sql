@@ -59,7 +59,7 @@ ALTER TABLE list_user_role ADD CONSTRAINT list_user_role_pk PRIMARY KEY ( id );
 
 CREATE TABLE notification (
     id       NUMBER NOT NULL,
-    id_usr   NUMBER NOT NULL,
+    id_user   NUMBER NOT NULL,
     msg      VARCHAR2(1000 BYTE)
 );
 
@@ -67,7 +67,7 @@ ALTER TABLE notification ADD CONSTRAINT notification_pk PRIMARY KEY ( id );
 
 CREATE TABLE sprint (
     id           NUMBER NOT NULL,
-    id_workflow  NUMBER NOT NULL,
+    label        VARCHAR2(255 BYTE),
     date_start   DATE,
     date_end     DATE
 );
@@ -106,6 +106,14 @@ CREATE TABLE user_role (
 
 ALTER TABLE user_role ADD CONSTRAINT user_role_pk PRIMARY KEY ( id_user,
                                                                 id_role );
+
+CREATE TABLE workflow_sprint (
+    id_workflow   NUMBER NOT NULL,
+    id_sprint     NUMBER NOT NULL
+);
+
+ALTER TABLE workflow_sprint ADD CONSTRAINT workflow_sprint_pk PRIMARY KEY ( id_workflow,
+                                                                            id_sprint );
 
 CREATE TABLE usr (
     id                NUMBER NOT NULL,
@@ -178,9 +186,14 @@ ALTER TABLE sprint_issue
         REFERENCES sprint ( id )
             ON DELETE CASCADE;
 
-ALTER TABLE sprint
-    ADD CONSTRAINT sprint_workflow_fk FOREIGN KEY ( id_workflow )
+ALTER TABLE workflow_sprint
+    ADD CONSTRAINT workflow_sprint_workflow_fk FOREIGN KEY ( id_workflow )
         REFERENCES workflow ( id )
+            ON DELETE CASCADE;
+
+ALTER TABLE workflow_sprint
+    ADD CONSTRAINT workflow_sprint_sprint_fk FOREIGN KEY ( id_sprint )
+        REFERENCES sprint ( id )
             ON DELETE CASCADE;
 
 ALTER TABLE team_member

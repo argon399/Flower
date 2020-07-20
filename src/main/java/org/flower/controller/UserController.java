@@ -2,7 +2,6 @@ package org.flower.controller;
 
 import org.flower.service.UserService;
 import org.flower.workflow.team.User;
-import org.flower.workflow.team.UserRole;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -34,7 +33,7 @@ public class UserController {
             Model model
     ) {
         model.addAttribute("user", user);
-        model.addAttribute("roles", UserRole.values());
+        //model.addAttribute("roles", UserRole.values());
         return "userEdit";
     }
     @PostMapping
