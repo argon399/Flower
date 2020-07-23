@@ -2,6 +2,7 @@ package org.flower.controller;
 
 import org.flower.service.UserService;
 import org.flower.workflow.team.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -15,7 +16,8 @@ import java.util.Map;
 public class UserController {
     private UserService userService;
 
-    public UserController(UserService userService) {
+    @Autowired
+    public void setUserService(UserService userService) {
         this.userService = userService;
     }
 
@@ -36,6 +38,7 @@ public class UserController {
         //model.addAttribute("roles", UserRole.values());
         return "userEdit";
     }
+
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public String userSave(

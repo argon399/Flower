@@ -19,15 +19,15 @@ public class MainController {
     private static UserRepository userRepository;
     @Autowired
     private static TeamRoleRepository teamRoleRepository;
+
     @GetMapping("/")
     public String start(Model model) {
 
-        Team team = new Team();
-        User user = new User();
-        user.setUsername("test");
-        userRepository.save(user);
-        team.addMember(user, teamRoleRepository.findByRole("LEADER"));
-        teamRepository.save(team);
+//        Team team = new Team();
+//        User user = new User();
+//        user.setUsername("test");
+//        userRepository.save(user);
+//        teamRepository.save(team);
 
         return "home";
     }
