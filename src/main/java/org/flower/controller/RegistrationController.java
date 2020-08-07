@@ -2,7 +2,7 @@ package org.flower.controller;
 
 import org.flower.service.UserService;
 import org.flower.util.CaptchaResponseDto;
-import org.flower.workflow.team.User;
+import org.flower.project.team.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -41,24 +41,25 @@ public class RegistrationController {
     }
 
     @GetMapping
-    public String registration() {
+    public String registration(Model model) {
+        model.addAttribute("user", new User());
+
         return "registration";
     }
 
     @PostMapping
     public String addUser(
-            @RequestParam("g-recaptcha-response") String recaptchaResponse,
+            //@RequestParam("g-recaptcha-response") String recaptchaResponse,
             @RequestParam("password2") String passwordConfirm,
             @Valid User user,
             BindingResult bindingResult,
             Model model) {
-        String url = String.format(CAPTCHA_URL, secret, recaptchaResponse);
-        CaptchaResponseDto response = restTemplate.postForObject(url, Collections.emptyList(), CaptchaResponseDto.class);
-
-        if(!response.isSuccess()) {
-            model.addAttribute("captchaError", "Fill captcha");
-        }
-
+//        String url = String.format(CAPTCHA_URL, secret, recaptchaResponse);
+//        CaptchaResponseDto response = restTemplate.postForObject(url, Collections.emptyList(), CaptchaResponseDto.class);
+//
+//        if(!response.isSuccess()) {
+//            model.addAttribute("captchaError", "Fill captcha");
+//        }
 
         boolean isConfirmEmpty = StringUtils.isEmpty(passwordConfirm);
 
@@ -72,7 +73,7 @@ public class RegistrationController {
             return "registration";
         }
 
-        if(isConfirmEmpty || bindingResult.hasErrors() || !response.isSuccess()) {
+        if(isConfirmEmpty || bindingResult.hasErrors() /*|| !response.isSuccess()*/) {
             Map<String, String> errors = getErrors(bindingResult);
 
             model.mergeAttributes(errors);
@@ -82,11 +83,12 @@ public class RegistrationController {
 
         if(!userService.addUser(user)) {
             model.addAttribute("usernameError", "User exist!");
+            bindingResult.addError(new FieldError("user","username", user.getUsername(), false, null, null, "User exist!"));
 
             return "registration";
         }
 
-        return "redirect:/login";
+        return "redirect:/home";
     }
 
 

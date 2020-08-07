@@ -1,27 +1,29 @@
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">>
-    <head th:insert="parts/head"></head>
-    <body>
-        <div th:replace="parts/navbar"></div>
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:insert="parts/head"><title>Flower</title></head>
+<body>
 
-        <div class="mb-1">
-            <div class="alert alert-danger" role="alert">
-                <div th:if="${param.error}">
-                    Invalid username and password.
-                </div>
-            </div>
-        </div>
+    <div id="logreg-forms">
+        <form class="form-signin" th:action="@{/login}" method="post">
+            <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> Sign in</h1>
 
-        <div th:if="${param.logout}">
-            You have been logged out.
-        </div>
-        <form th:action="@{/login}" method="post">
-            <div><label> User Name : <input type="text" name="username"/> </label></div>
-            <div><label> Password: <input type="password" name="password"/> </label></div>
-            <div><input type="submit" value="Sign In"/></div>
+            <p style="text-align:center">
+                <div th:if="${param.error}" class="alert alert-danger">Invalid username or password.</div>
+                <div th:if="${param.logout}" class="alert alert-info">You have been logged out.</div>
+                <div th:if="${message}" th:text="${message}" th:classappend="'alert-' + ${messageType}" class="alert">Message</div>
+            </p>
+
+            <input type="username" name="username" id="inputUsername" class="form-control" placeholder="Username" required="" autofocus="">
+            <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required="">
+
+            <button class="btn btn-success btn-block" type="submit"><i class="fas fa-sign-in-alt"></i> Sign in</button>
+            <a th:href="@{/password-restore}" id="forgot_pswd">Forgot password?</a>
+            <hr>
+            <a class="btn btn-primary btn-block" th:href="@{/registration}"><i class="fas fa-user-plus"></i> Sign up New Account</a>
         </form>
+    </div>
 
-        <div th:replace="parts/footer"></div>
-    </body>
+    <div th:replace="parts/footer :: footer"></div>
+</body>
 </html>

@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head th:insert="parts/head"><title>Flower</title></head>
+<body>
+<div th:replace="parts/navbar :: navbar"></div>
+
+<div class="container mt-5">
+    <div>List of users</div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Username</th>
+            <th>FIO</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Activity</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.username}">Username</td>
+            <td th:text="${user.fio}">Fio</td>
+            <td th:text="${user.email}">Email@email.com</td>
+            <td th:text="${#strings.listJoin(user.roles, ', ')}">Roles</td>
+            <td th:text="${user.active}">active</td>
+            <td><a th:href="@{/admin/user/{id}(id=${user.id})}">edit</a></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div th:replace="parts/footer :: footer"></div>
+</body>
+</html>

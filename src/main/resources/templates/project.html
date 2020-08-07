@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head th:insert="parts/head"><title>Flower</title></head>
+<body>
+<div th:replace="parts/navbar :: navbar"></div>
+
+    <div class="navbar-nav mr-auto sidenav">
+        <a class="btn btn-primary m-2" type="submit" th:href="@{/project/add}">Create new project</a>
+        <div class="row m-1" th:each="project : ${projects}" th:object="${project}">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="*{name}">name</h5>
+                        <p class="card-text" th:text="*{description}">Description</p>
+                        <a th:if="${user.equals(project.owner)}" th:href="@{/project/edit/} + *{id}" class="card-link">Edit</a>
+                        <a th:if="${user.equals(project.owner)} or ${user.equals(project.team.leader)}" th:href="@{/project/team/} + *{team.id}" class="card-link">Manage team</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="container-fluid">
+            Info about project
+        </div>
+    </div>
+
+<div th:replace="parts/footer :: footer"></div>
+</body>
+</html>

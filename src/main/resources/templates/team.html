@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head th:insert="parts/head"><title>Flower</title></head>
+<body>
+<div th:replace="parts/navbar :: navbar"></div>
+
+    <div class="container mt-5">
+        <form th:action="@{/project/team}" method="post">
+            <h5>Manage team</h5>
+            <div class="form-group row" th:each="member : ${team.members}" th:object="${member}">
+                <label class="col-sm-2 col-form-label" th:for="'member' + *{id}" th:text="*{fio}">Member</label>
+                <div class="col-sm-5">
+                    <select th:disabled="${team.getMemberRole(member).toString()} == 'PRODUCT_OWNER'" th:id="'member' + *{id}" th:name="'member' + *{id}" class="form-control">
+                        <option th:each="role : ${allRoles}"
+                                th:value="${role}"
+                                th:utext="${role}"
+                                th:selected="${team.getMemberRole(member)} == ${role}">role</option>
+                    </select>
+                </div>
+            </div>
+            <input type="hidden" th:field="${team.id}">
+            <div class="form-group row">
+                <div class="col-sm-5">
+                    <input type="submit" class="btn btn-primary" value="Save"/>
+                </div>
+            </div>
+        </form>
+    </div>
+
+<div th:replace="parts/footer :: footer"></div>
+</body>
+</html>

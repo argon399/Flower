@@ -1,73 +1,73 @@
 CREATE TABLE backlog_issue (
-    id_workflow   NUMBER NOT NULL,
-    id_issue      NUMBER NOT NULL
+    id_project   INT NOT NULL,
+    id_issue      INT NOT NULL
 );
 
-ALTER TABLE backlog_issue ADD CONSTRAINT backlog_issue_pk PRIMARY KEY ( id_workflow,
+ALTER TABLE backlog_issue ADD CONSTRAINT backlog_issue_pk PRIMARY KEY ( id_project,
                                                                         id_issue );
 
 CREATE TABLE issue (
-    id             NUMBER NOT NULL,
-    name           VARCHAR2(255 BYTE),
-    description    VARCHAR2(4000 BYTE),
+    id             INT NOT NULL,
+    name           VARCHAR(255),
+    description    VARCHAR(4000),
     date_created   DATE,
-    id_parent      NUMBER,
-    id_reporter    NUMBER,
-    id_executor    NUMBER,
-    id_priority    NUMBER,
-    id_type        NUMBER,
-    id_status      NUMBER
+    id_parent      INT,
+    id_reporter    INT,
+    id_executor    INT,
+    id_priority    INT,
+    id_type        INT,
+    id_status      INT
 );
 
 ALTER TABLE issue ADD CONSTRAINT issue_pk PRIMARY KEY ( id );
 
 CREATE TABLE list_issue_priority (
-    id         NUMBER NOT NULL,
-    priority   VARCHAR2(20 BYTE) NOT NULL
+    id         INT NOT NULL,
+    priority   VARCHAR(20) NOT NULL
 );
 
 ALTER TABLE list_issue_priority ADD CONSTRAINT list_issue_priority_pk PRIMARY KEY ( id );
 
 CREATE TABLE list_issue_status (
-    id       NUMBER NOT NULL,
-    status   VARCHAR2(20 BYTE) NOT NULL
+    id       INT NOT NULL,
+    status   VARCHAR(20) NOT NULL
 );
 
 ALTER TABLE list_issue_status ADD CONSTRAINT list_issue_status_pk PRIMARY KEY ( id );
 
 CREATE TABLE list_issue_type (
-    id     NUMBER NOT NULL,
-    type   VARCHAR2(20 BYTE) NOT NULL
+    id     INT NOT NULL,
+    type   VARCHAR(20) NOT NULL
 );
 
 ALTER TABLE list_issue_type ADD CONSTRAINT list_issue_type_pk PRIMARY KEY ( id );
 
 CREATE TABLE list_team_role (
-    id     NUMBER NOT NULL,
-    role   VARCHAR2(20 BYTE) NOT NULL
+    id     INT NOT NULL,
+    role   VARCHAR(20) NOT NULL
 );
 
 ALTER TABLE list_team_role ADD CONSTRAINT list_team_role_pk PRIMARY KEY ( id );
 
 CREATE TABLE list_user_role (
-    id            NUMBER NOT NULL,
-    role          VARCHAR2(20 BYTE) NOT NULL,
-    description   VARCHAR2(1000 BYTE)
+    id            INT NOT NULL,
+    role          VARCHAR(20) NOT NULL,
+    description   VARCHAR(1000)
 );
 
 ALTER TABLE list_user_role ADD CONSTRAINT list_user_role_pk PRIMARY KEY ( id );
 
 CREATE TABLE notification (
-    id       NUMBER NOT NULL,
-    id_user   NUMBER NOT NULL,
-    msg      VARCHAR2(1000 BYTE)
+    id       INT NOT NULL,
+    id_user  INT NOT NULL,
+    msg      VARCHAR(1000)
 );
 
 ALTER TABLE notification ADD CONSTRAINT notification_pk PRIMARY KEY ( id );
 
 CREATE TABLE sprint (
-    id           NUMBER NOT NULL,
-    label        VARCHAR2(255 BYTE),
+    id           INT NOT NULL,
+    label        VARCHAR(255),
     date_start   DATE,
     date_end     DATE
 );
@@ -75,67 +75,69 @@ CREATE TABLE sprint (
 ALTER TABLE sprint ADD CONSTRAINT sprint_pk PRIMARY KEY ( id );
 
 CREATE TABLE sprint_issue (
-    id_sprint   NUMBER NOT NULL,
-    id_issue    NUMBER NOT NULL
+    id_sprint   INT NOT NULL,
+    id_issue    INT NOT NULL
 );
 
 ALTER TABLE sprint_issue ADD CONSTRAINT sprint_issue_pk PRIMARY KEY ( id_issue,
                                                                       id_sprint );
 
 CREATE TABLE team (
-    id          NUMBER NOT NULL,
-    name        VARCHAR2(255 BYTE),
-    id_leader   NUMBER
+    id          INT NOT NULL,
+    name        VARCHAR(255),
+    id_leader   INT
 );
 
 ALTER TABLE team ADD CONSTRAINT team_pk PRIMARY KEY ( id );
 
 CREATE TABLE team_member (
-    id_team        NUMBER NOT NULL,
-    id_member      NUMBER NOT NULL,
-    id_team_role   NUMBER NOT NULL
+    id_team        INT NOT NULL,
+    id_member      INT NOT NULL,
+    id_team_role   INT NOT NULL
 );
 
 ALTER TABLE team_member ADD CONSTRAINT team_member_pk PRIMARY KEY ( id_team,
                                                                     id_member );
 
 CREATE TABLE user_role (
-    id_user   NUMBER NOT NULL,
-    id_role   NUMBER NOT NULL
+    id_user   INT NOT NULL,
+    id_role   INT NOT NULL
 );
 
 ALTER TABLE user_role ADD CONSTRAINT user_role_pk PRIMARY KEY ( id_user,
                                                                 id_role );
 
-CREATE TABLE workflow_sprint (
-    id_workflow   NUMBER NOT NULL,
-    id_sprint     NUMBER NOT NULL
+CREATE TABLE project_sprint (
+    id_project   INT NOT NULL,
+    id_sprint     INT NOT NULL
 );
 
-ALTER TABLE workflow_sprint ADD CONSTRAINT workflow_sprint_pk PRIMARY KEY ( id_workflow,
-                                                                            id_sprint );
+ALTER TABLE project_sprint ADD CONSTRAINT project_sprint_pk PRIMARY KEY ( id_project,
+                                                                          id_sprint );
 
 CREATE TABLE usr (
-    id                NUMBER NOT NULL,
-    username          VARCHAR2(255 BYTE),
-    fio               VARCHAR2(255 BYTE),
-    email             VARCHAR2(255 BYTE),
-    password          VARCHAR2(255 BYTE),
-    active            NUMBER,
-    activation_code   VARCHAR2(10 BYTE)
+    id                INT NOT NULL,
+    username          VARCHAR(255),
+    fio               VARCHAR(255),
+    email             VARCHAR(255),
+    password          VARCHAR(255),
+    active            INT,
+    activation_code   VARCHAR(100),
+    new_password      VARCHAR(255),
+    password_code     VARCHAR(100)
 );
 
 ALTER TABLE usr ADD CONSTRAINT usr_pk PRIMARY KEY ( id );
 
-CREATE TABLE workflow (
-    id            NUMBER NOT NULL,
-    id_team       NUMBER,
-    name          VARCHAR2(255 BYTE),
-    description   VARCHAR2(4000 BYTE),
-    id_admin      NUMBER
+CREATE TABLE project (
+    id            INT NOT NULL,
+    id_team       INT,
+    name          VARCHAR(255),
+    description   VARCHAR(4000),
+    id_owner      INT
 );
 
-ALTER TABLE workflow ADD CONSTRAINT workflow_pk PRIMARY KEY ( id );
+ALTER TABLE project ADD CONSTRAINT project_pk PRIMARY KEY ( id );
 
 ALTER TABLE backlog_issue
     ADD CONSTRAINT backlog_issue_issue_fk FOREIGN KEY ( id_issue )
@@ -143,8 +145,8 @@ ALTER TABLE backlog_issue
             ON DELETE CASCADE;
 
 ALTER TABLE backlog_issue
-    ADD CONSTRAINT backlog_issue_workflow_fk FOREIGN KEY ( id_workflow )
-        REFERENCES workflow ( id )
+    ADD CONSTRAINT backlog_issue_project_fk FOREIGN KEY ( id_project )
+        REFERENCES project ( id )
             ON DELETE CASCADE;
 
 ALTER TABLE issue
@@ -172,7 +174,7 @@ ALTER TABLE issue
         REFERENCES usr ( id );
 
 ALTER TABLE notification
-    ADD CONSTRAINT notification_usr_fk FOREIGN KEY ( id_usr )
+    ADD CONSTRAINT notification_usr_fk FOREIGN KEY ( id_user )
         REFERENCES usr ( id )
             ON DELETE CASCADE;
 
@@ -186,13 +188,13 @@ ALTER TABLE sprint_issue
         REFERENCES sprint ( id )
             ON DELETE CASCADE;
 
-ALTER TABLE workflow_sprint
-    ADD CONSTRAINT workflow_sprint_workflow_fk FOREIGN KEY ( id_workflow )
-        REFERENCES workflow ( id )
+ALTER TABLE project_sprint
+    ADD CONSTRAINT project_sprint_project_fk FOREIGN KEY ( id_project )
+        REFERENCES project ( id )
             ON DELETE CASCADE;
 
-ALTER TABLE workflow_sprint
-    ADD CONSTRAINT workflow_sprint_sprint_fk FOREIGN KEY ( id_sprint )
+ALTER TABLE project_sprint
+    ADD CONSTRAINT project_sprint_sprint_fk FOREIGN KEY ( id_sprint )
         REFERENCES sprint ( id )
             ON DELETE CASCADE;
 
@@ -224,10 +226,10 @@ ALTER TABLE user_role
         REFERENCES usr ( id )
             ON DELETE CASCADE;
 
-ALTER TABLE workflow
-    ADD CONSTRAINT workflow_team_fk FOREIGN KEY ( id_team )
+ALTER TABLE project
+    ADD CONSTRAINT project_team_fk FOREIGN KEY ( id_team )
         REFERENCES team ( id );
 
-ALTER TABLE workflow
-    ADD CONSTRAINT workflow_usr_fk FOREIGN KEY ( id_admin )
+ALTER TABLE project
+    ADD CONSTRAINT project_usr_fk FOREIGN KEY ( id_owner )
         REFERENCES usr ( id );
