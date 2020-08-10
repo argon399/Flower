@@ -23,7 +23,11 @@ public class TeamService {
                 }
             }
 
-            teamRepository.save(team);
+            saveTeam(team);
         }
+    }
+
+    public void saveTeam(Team team) {
+        teamRepository.save(team);
     }
 }

@@ -66,7 +66,7 @@ public class UserService implements UserDetailsService {
 
         userRepository.save(user);
 
-//        sendActivateMessage(user);
+        sendActivateMessage(user);
 
         return true;
     }
@@ -75,7 +75,7 @@ public class UserService implements UserDetailsService {
         if(!StringUtils.isEmpty(user.getEmail())) {
             String message = String.format(
                     "Hello, %s\n" +
-                            "Welcome to Flower. Please, visit next link: http://%s/activate/%s",
+                            "Welcome to Flower. Please, visit next link: http://%s/registration/activate/%s",
                     user.getUsername(),
                     serverName,
                     user.getActivationCode()

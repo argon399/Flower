@@ -49,17 +49,17 @@ public class RegistrationController {
 
     @PostMapping
     public String addUser(
-            //@RequestParam("g-recaptcha-response") String recaptchaResponse,
+            @RequestParam("g-recaptcha-response") String recaptchaResponse,
             @RequestParam("password2") String passwordConfirm,
             @Valid User user,
             BindingResult bindingResult,
             Model model) {
-//        String url = String.format(CAPTCHA_URL, secret, recaptchaResponse);
-//        CaptchaResponseDto response = restTemplate.postForObject(url, Collections.emptyList(), CaptchaResponseDto.class);
-//
-//        if(!response.isSuccess()) {
-//            model.addAttribute("captchaError", "Fill captcha");
-//        }
+        String url = String.format(CAPTCHA_URL, secret, recaptchaResponse);
+        CaptchaResponseDto response = restTemplate.postForObject(url, Collections.emptyList(), CaptchaResponseDto.class);
+
+        if(!response.isSuccess()) {
+            model.addAttribute("captchaError", "Fill captcha");
+        }
 
         boolean isConfirmEmpty = StringUtils.isEmpty(passwordConfirm);
 

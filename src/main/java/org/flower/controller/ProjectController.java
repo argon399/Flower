@@ -15,8 +15,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("project")
@@ -112,4 +115,34 @@ public class ProjectController {
         return "redirect:/project";
     }
 
+    @GetMapping("team/{team}/add")
+    public String getAddMemberForm(@AuthenticationPrincipal User user,
+                                   @PathVariable Team team,
+                                   Model model) {
+        if (team.isMember(user) && (team.getMemberRole(user) == TeamRole.LEADER || team.getMemberRole(user) == TeamRole.PRODUCT_OWNER)) {
+            model.addAttribute("allUsers", userService.findAll());
+            model.addAttribute("allRoles", Arrays.stream(TeamRole.values()).filter(role -> role != TeamRole.PRODUCT_OWNER).collect(Collectors.toSet()));
+            model.addAttribute("teamId", team.getId());
+        } else {
+            throw new AccessDeniedException("403");
+        }
+
+        return "team-add";
+    }
+
+    @PostMapping("team/{team}/add")
+    public String addMember(@AuthenticationPrincipal User user,
+                            @PathVariable Team team,
+                            @RequestParam User member,
+                            @RequestParam TeamRole role,
+                            Model model) {
+        if (team.isMember(user) && (team.getMemberRole(user) == TeamRole.LEADER || team.getMemberRole(user) == TeamRole.PRODUCT_OWNER)) {
+            team.addMember(member, role);
+            teamService.saveTeam(team);
+        } else {
+            throw new AccessDeniedException("403");
+        }
+
+        return "redirect:/project/team/" + team.getId();
+    }
 }

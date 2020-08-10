@@ -1,5 +1,3 @@
 # Project exclude paths
 /target/
-/.idea/dbnavigator.xml
-/.idea/jarRepositories.xml
 /.idea/

@@ -1,6 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head th:insert="parts/head"><title>Flower</title></head>
 <body>
 
@@ -14,7 +13,7 @@
                 <div th:if="${message}" th:text="${message}" th:classappend="'alert-' + ${messageType}" class="alert">Message</div>
             </p>
 
-            <input type="username" name="username" id="inputUsername" class="form-control" placeholder="Username" required="" autofocus="">
+            <input type="text" name="username" id="inputUsername" class="form-control" placeholder="Username" required="" autofocus="">
             <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required="">
 
             <button class="btn btn-success btn-block" type="submit"><i class="fas fa-sign-in-alt"></i> Sign in</button>
