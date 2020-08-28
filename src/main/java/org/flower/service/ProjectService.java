@@ -40,4 +40,12 @@ public class ProjectService {
     public void saveProject(Project project) {
         projectRepository.save(project);
     }
+
+    public void delProject(Project project) {
+        projectRepository.delete(project);
+
+        if (project.getTeam() != null) {
+            teamRepository.delete(project.getTeam());
+        }
+    }
 }

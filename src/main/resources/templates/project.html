@@ -12,8 +12,11 @@
                     <div class="card-body">
                         <h5 class="card-title" th:text="*{name}">name</h5>
                         <p class="card-text" th:text="*{description}">Description</p>
-                        <a th:if="${user.equals(project.owner)}" th:href="@{/project/edit/} + *{id}" class="card-link">Edit</a>
-                        <a th:if="${user.equals(project.owner)} or ${user.equals(project.team.leader)}" th:href="@{/project/team/} + *{team.id}" class="card-link">Manage team</a>
+                        <div class="card-footer">
+                            <a th:if="${user.equals(project.owner)}" th:href="@{/project/edit/} + *{id}" class="card-link">Edit</a>
+                            <a th:if="${user.equals(project.owner)} or ${user.equals(project.team.leader)}" th:href="@{/project/team/} + *{team.id}" class="card-link">Manage team</a>
+                            <a th:if="${user.equals(project.owner)}" th:href="@{/project/delete/} + *{id}" class="card-link">Delete</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -21,8 +24,26 @@
     </div>
 
     <div class="content-wrapper">
-        <div class="container-fluid">
-            Info about project
+        <div th:if="${project}" class="container-fluid">
+            <div class="row">
+                <div class="col-sm-10"></div>
+                <div class="col-sm-2">
+                    <a th:href="@{/project/issue/add}" th:if="${user.equals(project.owner)} or ${user.equals(project.team.leader)}" class="btn btn-warning m-2">Add issue</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="card-columns">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Issue name</h5>
+                            <p class="card-text">description</p>
+                            <div class="card-footer text-muted">
+                                <a th:href="@{/project/}"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

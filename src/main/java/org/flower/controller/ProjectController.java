@@ -39,6 +39,21 @@ public class ProjectController {
         return "project";
     }
 
+    @GetMapping("{project}")
+    public String selectProject(@AuthenticationPrincipal User user,
+                                @PathVariable Project project,
+                                Model model) {
+        if (project != null) {
+            model.addAttribute("project", project);
+        }
+
+        List<Project> projects = projectService.loadByMember(user);
+        model.addAttribute("projects", projects);
+        model.addAttribute("user", user);
+
+        return "project";
+    }
+
     @GetMapping("add")
     public String getNewProject(Model model) {
         model.addAttribute("project", new Project());
@@ -78,6 +93,19 @@ public class ProjectController {
             oldProject.setOwner(newProject.getOwner());
 
             projectService.saveProject(oldProject);
+        } else {
+            throw new AccessDeniedException("403");
+        }
+
+        return "redirect:/project";
+    }
+
+    @GetMapping("delete/{project}")
+    public String deleteProject(@AuthenticationPrincipal User user,
+                              @PathVariable Project project,
+                              Model model) {
+        if (project.getOwner().equals(user)) {
+            projectService.delProject(project);
         } else {
             throw new AccessDeniedException("403");
         }
