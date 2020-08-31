@@ -69,12 +69,6 @@ public class Project {
 
     public void setOwner(User owner) {
         this.owner = owner;
-
-        if (team == null) {
-            team = new Team();
-        }
-
-        team.setOwner(owner);
     }
 
     public Team getTeam() {
@@ -136,5 +130,23 @@ public class Project {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, description, owner, team);
+    }
+
+    public void removeIssue(Issue issue) {
+        if (issue != null) {
+            backlog.remove(issue);
+
+            for (Sprint sprint : sprints) {
+                sprint.deleteIssue(issue);
+            }
+        }
+    }
+
+    public void addSprint(Sprint sprint) {
+        sprints.add(sprint);
+    }
+
+    public void removeSprint(Sprint sprint) {
+        sprints.remove(sprint);
     }
 }

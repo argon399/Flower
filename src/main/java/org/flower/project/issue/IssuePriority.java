@@ -1,34 +1,11 @@
 package org.flower.project.issue;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+public enum IssuePriority {
+    LOW(0), MIDDLE(1), HIGH(2);
 
-@Entity
-@Table(name = "list_issue_priority")
-public class IssuePriority {
-    @Id
-    private int id;
+    private int priority;
 
-    @NotNull
-    @Column(length = 20)
-    private String priority;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getPriority() {
-        return priority;
-    }
-
-    public void setPriority(String priority) {
+    IssuePriority(int priority) {
         this.priority = priority;
     }
 }

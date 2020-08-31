@@ -57,14 +57,6 @@ CREATE TABLE list_user_role (
 
 ALTER TABLE list_user_role ADD CONSTRAINT list_user_role_pk PRIMARY KEY ( id );
 
-CREATE TABLE notification (
-    id       INT NOT NULL,
-    id_user  INT NOT NULL,
-    msg      VARCHAR(1000)
-);
-
-ALTER TABLE notification ADD CONSTRAINT notification_pk PRIMARY KEY ( id );
-
 CREATE TABLE sprint (
     id           INT NOT NULL,
     label        VARCHAR(255),
@@ -172,11 +164,6 @@ ALTER TABLE issue
 ALTER TABLE issue
     ADD CONSTRAINT issue_reporter_usr_fk FOREIGN KEY ( id_reporter )
         REFERENCES usr ( id );
-
-ALTER TABLE notification
-    ADD CONSTRAINT notification_usr_fk FOREIGN KEY ( id_user )
-        REFERENCES usr ( id )
-            ON DELETE CASCADE;
 
 ALTER TABLE sprint_issue
     ADD CONSTRAINT sprint_issue_issue_fk FOREIGN KEY ( id_issue )

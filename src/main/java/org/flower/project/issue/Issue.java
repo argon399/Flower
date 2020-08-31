@@ -18,23 +18,22 @@ public class Issue {
     private String description;
     private Date dateCreated;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_priority")
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "id_priority")
     private IssuePriority priority;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_status")
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "id_status")
     private IssueStatus status;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_type")
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "id_type")
     private IssueType type;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "id_parent")
     private Issue parent;
 
-    @NotBlank(message = "Reporter cannot be empty")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_reporter")
     private User reporter;

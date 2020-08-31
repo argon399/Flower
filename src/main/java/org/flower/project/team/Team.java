@@ -18,10 +18,6 @@ public class Team {
     @JoinColumn(name = "id_leader")
     private User leader;
 
-//    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    @JoinTable(name = "team_member", joinColumns = @JoinColumn(name = "id_team"), inverseJoinColumns = @JoinColumn(name = "id_team_role"))
-//    @MapKeyJoinColumn(name = "id_member")
-
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "team_member", joinColumns = @JoinColumn(name = "id_team"))
     @Enumerated(EnumType.ORDINAL)
@@ -44,20 +40,12 @@ public class Team {
     public void setLeader(User leader) {
         this.leader = leader;
 
-        members.keySet().stream()
-                .filter(member -> members.get(member) == TeamRole.LEADER)
-                .map(member -> members.put(member, TeamRole.DEVELOPER));
-
-        members.put(leader, TeamRole.LEADER);
-    }
-
-    public void setOwner(User owner) {
         for (User member : members.keySet()) {
-            if (members.get(member) == TeamRole.PRODUCT_OWNER)
+            if (members.get(member) == TeamRole.LEADER)
                 members.put(member, TeamRole.DEVELOPER);
         }
 
-        members.put(owner, TeamRole.PRODUCT_OWNER);
+        members.put(leader, TeamRole.LEADER);
     }
 
     public void setMemberRole(User member, TeamRole role) {
@@ -70,12 +58,12 @@ public class Team {
         members.put(member, role);
 
         if (role == TeamRole.LEADER) {
-            leader = member;
+            setLeader(member);
         }
     }
 
     public void addMember(User member, TeamRole role) {
-        members.put(member, role);
+        setMemberRole(member, role);
     }
 
     public TeamRole getMemberRole(User member) {
@@ -107,5 +95,13 @@ public class Team {
     @Override
     public int hashCode() {
         return Objects.hash(id, leader);
+    }
+
+    public void deleteMember(User member) {
+        members.remove(member);
+
+        if (leader.equals(member)) {
+            leader = null;
+        }
     }
 }

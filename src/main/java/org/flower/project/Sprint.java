@@ -1,6 +1,7 @@
 package org.flower.project;
 
 import org.flower.project.issue.Issue;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -16,8 +17,10 @@ public class Sprint {
 
     private String label;
 
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
     private Date dateStart;
 
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
     private Date dateEnd;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

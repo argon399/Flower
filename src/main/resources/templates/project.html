@@ -10,13 +10,13 @@
             <div class="col">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title" th:text="*{name}">name</h5>
+                        <a th:href="@{/project/} + *{id}"><h5 class="card-title" th:text="*{name}">name</h5></a>
                         <p class="card-text" th:text="*{description}">Description</p>
-                        <div class="card-footer">
-                            <a th:if="${user.equals(project.owner)}" th:href="@{/project/edit/} + *{id}" class="card-link">Edit</a>
-                            <a th:if="${user.equals(project.owner)} or ${user.equals(project.team.leader)}" th:href="@{/project/team/} + *{team.id}" class="card-link">Manage team</a>
-                            <a th:if="${user.equals(project.owner)}" th:href="@{/project/delete/} + *{id}" class="card-link">Delete</a>
-                        </div>
+                    </div>
+                    <div th:if="${user.equals(project.owner)} or ${user.equals(project.team.leader)}" class="card-footer">
+                        <a th:if="${user.equals(project.owner)}" th:href="@{/project/edit/} + *{id}" class="card-link"><i class="fa fa-edit"></i></a>
+                        <a th:if="${user.equals(project.team.leader)}" th:href="@{/team/} + *{team.id}" class="card-link"><i class="fa fa-users"></i></a>
+                        <a th:if="${user.equals(project.owner)}" th:href="@{/project/delete/} + *{id}" class="card-link"><i class="fa fa-trash"></i></a>
                     </div>
                 </div>
             </div>
@@ -26,19 +26,84 @@
     <div class="content-wrapper">
         <div th:if="${project}" class="container-fluid">
             <div class="row">
-                <div class="col-sm-10"></div>
-                <div class="col-sm-2">
-                    <a th:href="@{/project/issue/add}" th:if="${user.equals(project.owner)} or ${user.equals(project.team.leader)}" class="btn btn-warning m-2">Add issue</a>
+                <div class="col-sm-1">
+                    <a th:href="@{/project/{id}/issue/add(id=${project.id})}" th:if="${user.equals(project.owner)} or ${user.equals(project.team.leader)}" class="btn btn-warning m-2">Add issue</a>
+                </div>
+                <div class="col-sm-1">
+                    <a th:href="@{/project/{id}/sprint/add(id=${project.id})}" th:if="${user.equals(project.owner)} or ${user.equals(project.team.leader)}" class="btn btn-success m-2">Add sprint</a>
                 </div>
             </div>
-            <div class="row">
-                <div class="card-columns">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Issue name</h5>
-                            <p class="card-text">description</p>
-                            <div class="card-footer text-muted">
-                                <a th:href="@{/project/}"></a>
+
+            <div th:if="${!backlogIssues.isEmpty()}" class="row m-1">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Project backlog</h5>
+                        <div class="card-group">
+                            <div class="row m-1" th:each="issue : ${backlogIssues}" th:object="${issue}">
+                                <div class="col">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="card-title">
+                                                <p th:text="*{label}" th:remove="tag">label</p>
+                                                <span class="badge" th:text="*{type}"
+                                                      th:classappend="*{type.name()} == 'EPIC' ? badge-primary : (*{type.name()} == 'STORY' ? badge-info : (*{type.name()} == 'TASK' ? badge-warning : badge-danger))"></span>
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="card-text" th:text="*{description}">Description</p>
+                                            <p class="card-text mb-0" th:text="'Status: ' + *{status}">status</p>
+                                            <p class="card-text mb-0" th:text="'Priority: ' + *{priority}">priority</p>
+                                            <p class="card-text mb-0" th:text="'Reporter: ' + *{reporter.fio}">reporter</p>
+                                            <p class="card-text mb-1" th:text="'Executor: ' + *{executor.fio}">executor</p>
+                                            <p class="card-text mb-1" th:if="*{parent}" th:text="'Parent issue: ' + *{parent.label}">parent</p>
+                                            <p class="card-text mb-1"><small class="card-subtitle text-muted" th:text="${'Created '} + *{dateCreated}">dateCreated</small></p>
+                                        </div>
+                                        <div th:if="${user.equals(project.team.leader)}" class="card-footer">
+                                            <a th:href="@{/project/{project}/issue/{issue}/edit(project=${project.id},issue=*{id})}" class="card-link"><i class="fa fa-edit"></i></a>
+                                            <a th:href="@{/project/{project}/issue/{issue}/create-child(project=${project.id},issue=*{id})}" class="card-link"><i class="fa fa-expand"></i></a>
+                                            <a th:href="@{/project/{project}/issue/{issue}/to-sprint(project=${project.id},issue=*{id})}" class="card-link"><i class="fa fa-share"></i></a>
+                                            <a th:href="@{/project/{project}/issue/{issue}/delete(project=${project.id},issue=*{id})}" class="card-link"><i class="fa fa-trash"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${!sprint.issues.isEmpty()}" th:each="sprint : ${sprints}" class="row m-1">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${sprint.label} + ' (' + ${#calendars.format(sprint.dateStart, 'dd.MM.yyyy')} + ' - ' + ${#calendars.format(sprint.dateEnd, 'dd.MM.yyyy')} + ')'">Sprint</h5>
+                        <div class="card-group">
+                            <div class="row m-1" th:each="issue : ${sprint.issues}" th:object="${issue}">
+                                <div class="col">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="card-title">
+                                                <p th:text="*{label}" th:remove="tag">label</p>
+                                                <span class="badge" th:text="*{type}"
+                                                      th:classappend="*{type.name()} == 'EPIC' ? badge-primary : (*{type.name()} == 'STORY' ? badge-info : (*{type.name()} == 'TASK' ? badge-warning : badge-danger))"></span>
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="card-text" th:text="*{description}">Description</p>
+                                            <p class="card-text mb-0" th:text="'Status: ' + *{status}">status</p>
+                                            <p class="card-text mb-0" th:text="'Priority: ' + *{priority}">priority</p>
+                                            <p class="card-text mb-0" th:text="'Reporter: ' + *{reporter.fio}">reporter</p>
+                                            <p class="card-text mb-1" th:text="'Executor: ' + *{executor.fio}">executor</p>
+                                            <p class="card-text mb-1" th:if="*{parent}" th:text="'Parent issue: ' + *{parent.label}">parent</p>
+                                            <p class="card-text mb-1"><small class="card-subtitle text-muted" th:text="${'Created '} + *{dateCreated}">dateCreated</small></p>
+                                        </div>
+                                        <div th:if="${user.equals(project.team.leader)}" class="card-footer">
+                                            <a th:href="@{/project/{project}/issue/{issue}/edit(project=${project.id},issue=*{id})}" class="card-link"><i class="fa fa-edit"></i></a>
+                                            <a th:href="@{/project/{project}/issue/{issue}/create-child(project=${project.id},issue=*{id})}" class="card-link"><i class="fa fa-expand"></i></a>
+                                            <a th:href="@{/project/{project}/issue/{issue}/to-sprint(project=${project.id},issue=*{id})}" class="card-link"><i class="fa fa-share"></i></a>
+                                            <a th:href="@{/project/{project}/issue/{issue}/delete(project=${project.id},issue=*{id})}" class="card-link"><i class="fa fa-trash"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

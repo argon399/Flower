@@ -1,34 +1,11 @@
 package org.flower.project.issue;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+public enum IssueStatus {
+    OPEN(0), IN_PROGRESS(1), REVIEW(2), TEST(3), RESOLVED(4), REOPEN(5), CLOSED(6);
 
-@Entity
-@Table(name = "list_issue_status")
-public class IssueStatus {
-    @Id
-    private int id;
+    private int status;
 
-    @NotNull
-    @Column(length = 20)
-    private String status;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
+    IssueStatus(int status) {
         this.status = status;
     }
 }

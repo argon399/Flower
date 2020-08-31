@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head th:insert="parts/head"><title>Flower</title></head>
+<body>
+<div th:replace="parts/navbar :: navbar"></div>
+
+<div class="container mt-5">
+    <form th:action="@{to-sprint}" method="post">
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="sprint">Sprint</label>
+            <div class="col-sm-5">
+                <select name="sprint" class="form-control" id="sprint">
+                    <option th:each="sprint : ${sprints}" th:value="${sprint.id}" th:utext="${sprint.label}">sprint</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-5">
+                <input type="submit" class="btn btn-primary" value="Move to sprint"/>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div th:replace="parts/footer :: footer"></div>
+</body>
+</html>

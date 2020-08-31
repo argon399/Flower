@@ -22,18 +22,16 @@ public class ProjectService {
         List<Project> allProject = projectRepository.findAll();
 
         return allProject.stream()
-                .filter(project -> project.getTeam().isMember(user))
+                .filter(project -> project.getTeam().isMember(user) || project.getOwner().equals(user))
                 .collect(Collectors.toList());
     }
 
     public void addProject(Project project) {
         Team team = new Team();
         team.setLeader(project.getOwner());
-
         teamRepository.save(team);
 
         project.setTeam(team);
-
         projectRepository.save(project);
     }
 
@@ -41,7 +39,7 @@ public class ProjectService {
         projectRepository.save(project);
     }
 
-    public void delProject(Project project) {
+    public void deleteProject(Project project) {
         projectRepository.delete(project);
 
         if (project.getTeam() != null) {

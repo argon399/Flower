@@ -5,7 +5,7 @@
 <div th:replace="parts/navbar :: navbar"></div>
 
 <div class="container mt-5">
-    <form th:action="@{/project/team/{id}/add(id=${teamId})}" method="post">
+    <form th:action="@{/team/{id}/add(id=${teamId})}" method="post">
         <div class="form-group row">
             <label class="col-sm-2 col-form-label" for="member">New member</label>
             <div class="col-sm-5">

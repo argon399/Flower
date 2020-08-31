@@ -5,17 +5,20 @@
 <div th:replace="parts/navbar :: navbar"></div>
 
     <div class="container mt-5">
-        <form th:action="@{/project/team}" method="post">
+        <form th:action="@{/team}" method="post">
             <h5>Manage team</h5>
             <div class="form-group row" th:each="member : ${team.members}" th:object="${member}">
                 <label class="col-sm-2 col-form-label" th:for="'member' + *{id}" th:text="*{fio}">Member</label>
                 <div class="col-sm-5">
-                    <select th:disabled="${team.getMemberRole(member).toString()} == 'PRODUCT_OWNER'" th:id="'member' + *{id}" th:name="'member' + *{id}" class="form-control">
+                    <select th:id="'member' + *{id}" th:name="'member' + *{id}" class="form-control">
                         <option th:each="role : ${allRoles}"
                                 th:value="${role}"
                                 th:utext="${role}"
                                 th:selected="${team.getMemberRole(member)} == ${role}">role</option>
                     </select>
+                </div>
+                <div class="col-sm-2">
+                    <a th:href="@{/team/{id_team}/delete/{id_member}(id_team=${team.id},id_member=*{id})}" type="submit" class="btn btn-default">Delete member</a>
                 </div>
             </div>
             <input type="hidden" th:field="${team.id}">
@@ -24,7 +27,7 @@
                     <input type="submit" class="btn btn-primary" value="Save"/>
                 </div>
                 <div class="col-sm-2">
-                    <a th:href="@{/project/team/{id}/add(id=${team.id})}" type="submit" class="btn btn-default">Add member</a>
+                    <a th:href="@{/team/{id}/add(id=${team.id})}" type="submit" class="btn btn-default">Add member</a>
                 </div>
             </div>
         </form>
