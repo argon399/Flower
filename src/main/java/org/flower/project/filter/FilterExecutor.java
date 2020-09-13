@@ -4,7 +4,6 @@ import org.flower.project.issue.Issue;
 import org.flower.project.team.User;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class FilterExecutor implements Filter {
@@ -15,13 +14,13 @@ public class FilterExecutor implements Filter {
     }
 
     @Override
-    public Set<Issue> filter(List<Issue> issues) {
+    public List<Issue> filter(List<Issue> issues) {
         if (executor == null) {
             return null;
         }
         return issues.stream()
                 .filter(issue -> issue.getExecutor() != null)
                 .filter(issue -> issue.getExecutor().getId() == executor.getId())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 }

@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head th:insert="parts/head"><title>Flower</title></head>
+<body>
+<div th:replace="parts/navbar :: navbar"></div>
+
+<div class="container mt-5">
+    <form th:action="@{filtered}" method="post">
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="filterLabel">Label contain</label>
+            <div class="col-sm-5">
+                <input type="text" th:name="label" class="form-control" id="filterLabel">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="filterDate">Date</label>
+            <div class="col-sm-5">
+                <input type="text" th:name="date" class="form-control" id="filterDate">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="filterPriority">Priority</label>
+            <div class="col-sm-5">
+                <select name="priority" class="form-control" id="filterPriority">
+                    <option th:value="${NULL}">-</option>
+                    <option th:each="priority : ${priorities}" th:value="${priority}" th:utext="${priority}">priority</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="filterReporter">Reporter</label>
+            <div class="col-sm-5">
+                <select name="reporter" class="form-control" id="filterReporter">
+                    <option th:value="${NULL}">-</option>
+                    <option th:each="reporter : ${users}" th:value="${reporter.id}" th:utext="${reporter.fio}">reporter</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="filterExecutor">Executor</label>
+            <div class="col-sm-5">
+                <select name="executor" class="form-control" id="filterExecutor">
+                    <option th:value="${NULL}">-</option>
+                    <option th:each="executor : ${users}" th:value="${executor.id}" th:utext="${executor.fio}">executor</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-5">
+                <input type="submit" class="btn btn-primary" value="Filter"/>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div th:replace="parts/footer :: footer"></div>
+</body>
+</html>

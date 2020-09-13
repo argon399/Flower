@@ -6,13 +6,9 @@ import org.flower.project.issue.Issue;
 import org.flower.project.issue.IssuePriority;
 import org.flower.project.issue.IssueStatus;
 import org.flower.project.issue.IssueType;
-import org.flower.project.team.Team;
-import org.flower.project.team.TeamRole;
 import org.flower.project.team.User;
 import org.flower.repository.IssueRepository;
-import org.flower.repository.SprintRepository;
 import org.flower.service.ProjectService;
-import org.flower.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,14 +28,12 @@ public class IssueController {
     private ProjectService projectService;
     @Autowired
     private IssueRepository issueRepository;
-    @Autowired
-    private SprintRepository sprintRepository;
 
     @GetMapping("/project/{project}/issue/add")
     public String getNewIssueForm(@AuthenticationPrincipal User user,
                                   @PathVariable Project project,
                                   Model model) {
-        if (project.getOwner().equals(user) || project.getTeam().getLeader().equals(user)) {
+        if (checkPrivileges(project, user)) {
             model.addAttribute("issue", new Issue());
             model.addAttribute("allUsers", project.getTeam().getMembers());
             model.addAttribute("allTypes", IssueType.values());
@@ -57,10 +51,9 @@ public class IssueController {
                               @PathVariable Project project,
                               @Valid Issue issue,
                               Model model) {
-        if (project.getOwner().equals(user) || project.getTeam().getLeader().equals(user)) {
+        if (checkPrivileges(project, user)) {
             issue.setDateCreated(new Date());
-            issueRepository.save(issue);
-            project.getBacklog().add(issue);
+            project.addIssue(issue);
             projectService.saveProject(project);
         } else {
             throw new AccessDeniedException("403");
@@ -93,9 +86,8 @@ public class IssueController {
                             @PathVariable Project project,
                             @PathVariable Issue issue,
                             Model model) {
-        if (project.getOwner().equals(user) || project.getTeam().getLeader().equals(user)) {
+        if (checkPrivileges(project, user)) {
             project.removeIssue(issue);
-            issueRepository.delete(issue);
             projectService.saveProject(project);
         } else {
             throw new AccessDeniedException("403");
@@ -109,7 +101,7 @@ public class IssueController {
                             @PathVariable Project project,
                             @Valid Issue issue,
                             Model model) {
-        if (project.getOwner().equals(user) || project.getTeam().getLeader().equals(user)) {
+        if (checkPrivileges(project, user)) {
             issueRepository.save(issue);
         } else {
             throw new AccessDeniedException("403");
@@ -123,7 +115,7 @@ public class IssueController {
                               @PathVariable Project project,
                               @PathVariable Issue issue,
                               Model model) {
-        if (project.getOwner().equals(user) || project.getTeam().getLeader().equals(user)) {
+        if (checkPrivileges(project, user)) {
             model.addAttribute("parentIssue", issue);
         } else {
             throw new AccessDeniedException("403");
@@ -132,38 +124,40 @@ public class IssueController {
         return getNewIssueForm(user, project, model);
     }
 
-    @GetMapping("/project/{project}/issue/{issue}/to-sprint")
+    @GetMapping("/project/{project}/issue/{issue}/move")
     public String selectSprint(@AuthenticationPrincipal User user,
                                    @PathVariable Project project,
                                    @PathVariable Issue issue,
                                    Model model) {
-        if (project.getOwner().equals(user) || project.getTeam().getLeader().equals(user)) {
+        if (checkPrivileges(project, user)) {
             model.addAttribute("sprints", project.getSprints());
             model.addAttribute("issue", issue);
         } else {
             throw new AccessDeniedException("403");
         }
 
-        return "issue-to-sprint";
+        return "issue-move";
     }
 
-    @PostMapping("/project/{project}/issue/{issue}/to-sprint")
+    @PostMapping("/project/{project}/issue/{issue}/move")
     public String moveToSprint(@AuthenticationPrincipal User user,
                                @PathVariable Project project,
                                @PathVariable Issue issue,
                                @RequestParam("sprint") Sprint sprint,
                                Model model) {
-        if (project.getOwner().equals(user) || project.getTeam().getLeader().equals(user)) {
-            sprint.addIssue(issue);
-            sprintRepository.save(sprint);
-
-            project.getBacklog().remove(issue);
+        if (checkPrivileges(project, user)) {
+            project.moveIssue(issue, sprint);
             projectService.saveProject(project);
+
         } else {
             throw new AccessDeniedException("403");
         }
 
         return "redirect:/project/" + project.getId();
+    }
+
+    private boolean checkPrivileges(Project project, User user) {
+        return project.getOwner().equals(user) || project.getTeam().getLeader().equals(user);
     }
 
 }

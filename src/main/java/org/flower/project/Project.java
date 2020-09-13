@@ -31,13 +31,15 @@ public class Project {
     @JoinColumn(name = "id_team")
     private Team team;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "backlog_issue", joinColumns = @JoinColumn(name = "id_project"), inverseJoinColumns = @JoinColumn(name = "id_issue"))
     private List<Issue> backlog = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "project_sprint", joinColumns = @JoinColumn(name = "id_project"), inverseJoinColumns = @JoinColumn(name = "id_sprint"))
     private List<Sprint> sprints = new ArrayList<>();
+
+
 
     public int getId() {
         return id;
@@ -91,28 +93,33 @@ public class Project {
         backlog.add(issue);
     }
 
-    public boolean deleteIssue(Issue issue) {
-        if (issue == null) {
-            return false;
-        }
+    public void removeIssue(Issue issue) {
+        if (issue != null) {
+            backlog.remove(issue);
 
-        return backlog.remove(issue);
+            for (Sprint sprint : sprints) {
+                sprint.deleteIssue(issue);
+            }
+        }
     }
 
-    public Set<Issue> filterBacklog(Filter filter) {
-        if (filter == null) {
-            return null;
-        }
-
-        return filter.filter(backlog);
+    public void addSprint(Sprint sprint) {
+        sprints.add(sprint);
     }
 
-    public Set<Issue> filterSprint(Filter filter, Sprint sprint) {
-        if (filter == null || sprint == null || sprint.getIssues() == null) {
-            return null;
+    public void moveIssue(Issue issue, Sprint sprint) {
+        removeIssue(issue);
+
+        if (sprint != null) {
+            sprint.addIssue(issue);
+        } else {
+            backlog.add(issue);
         }
 
-        return filter.filter(sprint.getIssues());
+    }
+
+    public void removeSprint(Sprint sprint) {
+        sprints.remove(sprint);
     }
 
     @Override
@@ -130,23 +137,5 @@ public class Project {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, description, owner, team);
-    }
-
-    public void removeIssue(Issue issue) {
-        if (issue != null) {
-            backlog.remove(issue);
-
-            for (Sprint sprint : sprints) {
-                sprint.deleteIssue(issue);
-            }
-        }
-    }
-
-    public void addSprint(Sprint sprint) {
-        sprints.add(sprint);
-    }
-
-    public void removeSprint(Sprint sprint) {
-        sprints.remove(sprint);
     }
 }

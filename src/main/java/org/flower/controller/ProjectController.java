@@ -2,21 +2,24 @@ package org.flower.controller;
 
 import org.flower.project.Project;
 import org.flower.project.Sprint;
+import org.flower.project.filter.*;
+import org.flower.project.issue.IssuePriority;
 import org.flower.project.team.User;
 import org.flower.repository.SprintRepository;
 import org.flower.service.ProjectService;
 import org.flower.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.spring5.context.SpringContextUtils;
 
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -132,7 +135,7 @@ public class ProjectController {
                             Model model,
                             @Valid Sprint sprint) {
 
-        sprintRepository.save(sprint);
+        //sprintRepository.save(sprint);
         project.addSprint(sprint);
         projectService.saveProject(project);
 
@@ -141,15 +144,59 @@ public class ProjectController {
 
     @GetMapping("{project}/sprint/remove/{sprint}")
     public String removeSprint(@AuthenticationPrincipal User user,
-                            @PathVariable Project project,
-                            Model model,
-                            @PathVariable Sprint sprint) {
+                               @PathVariable Project project,
+                               @PathVariable Sprint sprint,
+                               Model model) {
 
         project.removeSprint(sprint);
-        sprintRepository.delete(sprint);
+        //sprintRepository.delete(sprint);
         projectService.saveProject(project);
 
-        return "redirect:/project";
+        return "redirect:/project/" + project.getId();
+    }
+
+    @GetMapping("{project}/filter")
+    public String showFilters(@AuthenticationPrincipal User user,
+                               @PathVariable Project project,
+                               Model model) {
+        model.addAttribute("users", userService.findAll());
+        model.addAttribute("priorities", IssuePriority.values());
+
+        return "filter";
+    }
+
+    @PostMapping("{project}/filtered")
+    public String filtered(@AuthenticationPrincipal User user,
+                           @PathVariable Project project,
+                           @RequestParam("label") String label,
+                           @RequestParam("date") @DateTimeFormat(pattern = "dd.MM.yyyy") Date date,
+                           @RequestParam("priority") IssuePriority priority,
+                           @RequestParam("reporter") User reporter,
+                           @RequestParam("executor") User executor,
+                           Model model) {
+
+        List<Project> projects = projectService.loadByMember(user);
+        model.addAttribute("project", project);
+        model.addAttribute("projects", projects);
+        model.addAttribute("user", user);
+
+        FilterHeap filterHeap = new FilterHeap();
+        if (!StringUtils.isEmpty(label))
+            filterHeap.addFilter(new FilterLabel(label));
+        if (date != null)
+            filterHeap.addFilter(new FilterDateCreate(date));
+        if (priority != null)
+            filterHeap.addFilter(new FilterPriority(priority));
+        if (reporter != null)
+            filterHeap.addFilter(new FilterReporter(reporter));
+        if (executor != null)
+            filterHeap.addFilter(new FilterExecutor(executor));
+
+        model.addAttribute("backlogIssues", filterHeap.filter(project.getBacklog()));
+        model.addAttribute("sprints", filterHeap.filterSprint(project.getSprints()));
+        model.addAttribute("isFilter", true);
+
+        return "project";
     }
 
 }

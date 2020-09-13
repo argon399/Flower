@@ -4,7 +4,6 @@ import org.flower.project.issue.Issue;
 import org.flower.project.team.User;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class FilterReporter implements Filter {
@@ -15,7 +14,7 @@ public class FilterReporter implements Filter {
     }
 
     @Override
-    public Set<Issue> filter(List<Issue> issues) {
+    public List<Issue> filter(List<Issue> issues) {
         if (reporter == null) {
             return null;
         }
@@ -23,6 +22,6 @@ public class FilterReporter implements Filter {
         return issues.stream()
                 .filter(issue -> issue.getReporter() != null)
                 .filter(issue -> issue.getReporter().getId() == reporter.getId())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 }

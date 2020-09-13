@@ -4,7 +4,6 @@ import org.flower.project.issue.Issue;
 import org.flower.project.issue.IssuePriority;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class FilterPriority implements Filter {
@@ -15,7 +14,7 @@ public class FilterPriority implements Filter {
     }
 
     @Override
-    public Set<Issue> filter(List<Issue> issues) {
+    public List<Issue> filter(List<Issue> issues) {
         if (priority == null) {
             return null;
         }
@@ -23,6 +22,6 @@ public class FilterPriority implements Filter {
         return issues.stream()
                 .filter(issue -> issue.getPriority() != null)
                 .filter(issue -> issue.getPriority().equals(priority))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 }

@@ -26,11 +26,11 @@
     <div class="content-wrapper">
         <div th:if="${project}" class="container-fluid">
             <div class="row">
-                <div class="col-sm-1">
+                <div class="col-sm-12">
                     <a th:href="@{/project/{id}/issue/add(id=${project.id})}" th:if="${user.equals(project.owner)} or ${user.equals(project.team.leader)}" class="btn btn-warning m-2">Add issue</a>
-                </div>
-                <div class="col-sm-1">
-                    <a th:href="@{/project/{id}/sprint/add(id=${project.id})}" th:if="${user.equals(project.owner)} or ${user.equals(project.team.leader)}" class="btn btn-success m-2">Add sprint</a>
+                    <a th:href="@{/project/{id}/sprint/add(id=${project.id})}" th:if="${user.equals(project.owner)} or ${user.equals(project.team.leader)}" class="btn btn-success m-2">Create sprint</a>
+                    <a th:href="@{/project/{id}/filter(id=${project.id})}" th:if="!${isFilter}" class="btn btn-info m-2">Filter</a>
+                    <a th:href="@{/project/{id}(id=${project.id})}" th:if="${isFilter}" class="btn btn-info m-2">Show all</a>
                 </div>
             </div>
 
@@ -61,7 +61,7 @@
                                         <div th:if="${user.equals(project.team.leader)}" class="card-footer">
                                             <a th:href="@{/project/{project}/issue/{issue}/edit(project=${project.id},issue=*{id})}" class="card-link"><i class="fa fa-edit"></i></a>
                                             <a th:href="@{/project/{project}/issue/{issue}/create-child(project=${project.id},issue=*{id})}" class="card-link"><i class="fa fa-expand"></i></a>
-                                            <a th:href="@{/project/{project}/issue/{issue}/to-sprint(project=${project.id},issue=*{id})}" class="card-link"><i class="fa fa-share"></i></a>
+                                            <a th:href="@{/project/{project}/issue/{issue}/move(project=${project.id},issue=*{id})}" class="card-link"><i class="fa fa-share"></i></a>
                                             <a th:href="@{/project/{project}/issue/{issue}/delete(project=${project.id},issue=*{id})}" class="card-link"><i class="fa fa-trash"></i></a>
                                         </div>
                                     </div>
@@ -72,10 +72,13 @@
                 </div>
             </div>
 
-            <div th:if="${!sprint.issues.isEmpty()}" th:each="sprint : ${sprints}" class="row m-1">
+            <div th:each="sprint : ${sprints}" class="row m-1">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title" th:text="${sprint.label} + ' (' + ${#calendars.format(sprint.dateStart, 'dd.MM.yyyy')} + ' - ' + ${#calendars.format(sprint.dateEnd, 'dd.MM.yyyy')} + ')'">Sprint</h5>
+                        <h5 class="card-title" >
+                            <div th:remove="tag" th:text="${sprint.label} + ' (' + ${#calendars.format(sprint.dateStart, 'dd.MM.yyyy')} + ' - ' + ${#calendars.format(sprint.dateEnd, 'dd.MM.yyyy')} + ')'">Sprint</div>
+                            <a th:href="@{/project/{project}/sprint/remove/{sprint}(project=${project.id},sprint=${sprint.id})}" class="card-link"><i class="fa fa-trash"></i></a>
+                        </h5>
                         <div class="card-group">
                             <div class="row m-1" th:each="issue : ${sprint.issues}" th:object="${issue}">
                                 <div class="col">
@@ -99,7 +102,7 @@
                                         <div th:if="${user.equals(project.team.leader)}" class="card-footer">
                                             <a th:href="@{/project/{project}/issue/{issue}/edit(project=${project.id},issue=*{id})}" class="card-link"><i class="fa fa-edit"></i></a>
                                             <a th:href="@{/project/{project}/issue/{issue}/create-child(project=${project.id},issue=*{id})}" class="card-link"><i class="fa fa-expand"></i></a>
-                                            <a th:href="@{/project/{project}/issue/{issue}/to-sprint(project=${project.id},issue=*{id})}" class="card-link"><i class="fa fa-share"></i></a>
+                                            <a th:href="@{/project/{project}/issue/{issue}/move(project=${project.id},issue=*{id})}" class="card-link"><i class="fa fa-share"></i></a>
                                             <a th:href="@{/project/{project}/issue/{issue}/delete(project=${project.id},issue=*{id})}" class="card-link"><i class="fa fa-trash"></i></a>
                                         </div>
                                     </div>

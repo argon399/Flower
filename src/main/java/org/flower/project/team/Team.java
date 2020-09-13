@@ -100,7 +100,7 @@ public class Team {
     public void deleteMember(User member) {
         members.remove(member);
 
-        if (leader.equals(member)) {
+        if (leader != null && leader.equals(member)) {
             leader = null;
         }
     }

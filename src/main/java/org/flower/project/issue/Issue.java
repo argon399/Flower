@@ -42,6 +42,18 @@ public class Issue {
     @JoinColumn(name = "id_executor")
     private User executor;
 
+    public Issue(int id, String label, IssuePriority priority, IssueType type, User reporter) {
+        this.id = id;
+        this.label = label;
+        this.priority = priority;
+        this.type = type;
+        this.reporter = reporter;
+        this.dateCreated = new Date();
+    }
+
+    public Issue() {
+    }
+
     public int getId() {
         return id;
     }

@@ -76,4 +76,8 @@ public class Sprint {
     public void setLabel(String label) {
         this.label = label;
     }
+
+    public void setIssues(List<Issue> issues) {
+        this.issues = issues;
+    }
 }

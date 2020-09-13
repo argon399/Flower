@@ -5,7 +5,6 @@ import org.flower.project.issue.Issue;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class FilterDateCreate implements Filter {
@@ -16,7 +15,7 @@ public class FilterDateCreate implements Filter {
     }
 
     @Override
-    public Set<Issue> filter(List<Issue> issues) {
+    public List<Issue> filter(List<Issue> issues) {
         if (dateCreate == null) {
             return null;
         }
@@ -26,6 +25,6 @@ public class FilterDateCreate implements Filter {
         return issues.stream()
                 .filter(issue -> issue.getDateCreated() != null)
                 .filter(issue -> dateFormat.format(issue.getDateCreated()).equals(dateFormat.format(dateCreate)))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 }
